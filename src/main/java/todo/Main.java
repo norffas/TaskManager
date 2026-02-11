@@ -1,6 +1,7 @@
-import java.util.List;
+package todo;
 
-public class FinalTaskManagerTest {
+
+public class Main {
     public static void main(String[] args) {
         ConsoleUI console = new ConsoleUI();
         console.start();

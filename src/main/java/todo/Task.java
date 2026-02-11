@@ -1,3 +1,5 @@
+package todo;
+
 import java.time.LocalDateTime;
 
 public class Task {
@@ -37,7 +39,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return String.format("Task[%d: %s, completed=%s, created=%s]",
+        return String.format("todo.Task[%d: %s, completed=%s, created=%s]",
                 id, description, completed, createdAt);
     }
 

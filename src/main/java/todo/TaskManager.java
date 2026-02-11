@@ -1,3 +1,5 @@
+package todo;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +14,10 @@ public class TaskManager {
     }
 
     public Task addTask(String description) {
-        Task task = new Task(nextId, description);
+        if(description == null || description.trim().isEmpty()){
+            throw new IllegalArgumentException("Описание не может быть пустым");
+        }
+        Task task = new Task(nextId, description.trim());
         tasks.add(task);
         nextId++;
         return task;
