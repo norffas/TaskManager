@@ -7,9 +7,11 @@ import java.util.List;
 public class TaskManager {
     private List<Task> tasks;
     private int nextId;
+    private FileStorage storage;
 
-    public TaskManager() {
-        this.tasks = new ArrayList<>();
+    public TaskManager(FileStorage storage) {
+        this.storage = storage;
+        this.tasks = storage.load();
         this.nextId = 1;
     }
 
@@ -19,6 +21,7 @@ public class TaskManager {
         }
         Task task = new Task(nextId, description.trim());
         tasks.add(task);
+        storage.save(tasks);
         nextId++;
         return task;
     }
@@ -40,6 +43,7 @@ public class TaskManager {
         Task task = findTaskById(id);
         if (task != null) {
             task.complete();
+            storage.save(tasks);
             return true;
         }
         return false;
@@ -50,6 +54,7 @@ public class TaskManager {
         while (iterator.hasNext()) {
             if (iterator.next().getId() == id) {
                 iterator.remove();
+                storage.save(tasks);
                 return true;
             }
         }
@@ -75,4 +80,5 @@ public class TaskManager {
         }
         return pendingTasks;
     }
+
 }

@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUI {
-    private Scanner scanner;
-    private TaskManager manager;
+    private final Scanner scanner;
+    private final TaskManager manager;
 
 
-    public ConsoleUI() {
-        manager = new TaskManager();
+    public ConsoleUI(TaskManager manager) {
+        this.manager = manager;
         scanner = new Scanner(System.in);
     }
 
@@ -102,7 +102,7 @@ public class ConsoleUI {
         5. Показать выполненные задачи
         6. Показать невыполненные задачи
         0. Выход
-        Ваш выбор: """;
+        Ваш выбор:""";
     }
 
     private int readInt(){

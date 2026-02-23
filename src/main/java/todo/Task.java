@@ -15,6 +15,13 @@ public class Task {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Task(int id, String description, String completed, String time){
+        this.id = id;
+        this.description = description;
+        this.completed = Boolean.parseBoolean(completed);
+        this.createdAt = LocalDateTime.parse(time);
+    }
+
     public boolean isCompleted() {
         return completed;
     }

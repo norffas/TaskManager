@@ -12,7 +12,7 @@ public class TaskManagerTest {
 
     @BeforeEach
     void setUp(){
-        manager = new TaskManager();
+        manager = new TaskManager(new StorageForTests());
     }
 
 
