@@ -1,18 +1,29 @@
 package todo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public class TaskManager {
-    private List<Task> tasks;
+    private final List<Task> tasks;
     private int nextId;
-    private FileStorage storage;
+    private final FileStorage storage;
 
     public TaskManager(FileStorage storage) {
         this.storage = storage;
         this.tasks = storage.load();
-        this.nextId = 1;
+        int tempId = 0;
+        for(Task task : tasks){
+            if(task.getId() > tempId)
+                tempId = task.getId();
+            if(task.getStatus() == TaskStatus.PENDING){
+                if(task.getCreatedAt().isBefore(LocalDateTime.now().minusDays(2))){
+                    task.setStatus(TaskStatus.ABANDONED);
+                }
+            }
+        }
+        this.nextId = tempId + 1;
     }
 
     public Task addTask(String description) {

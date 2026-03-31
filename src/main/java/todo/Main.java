@@ -7,5 +7,6 @@ public class Main {
         TaskManager manager = new TaskManager(storage);
         ConsoleUI console = new ConsoleUI(manager);
         console.start();
+
     }
 }
