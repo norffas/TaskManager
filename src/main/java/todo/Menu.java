@@ -1,117 +1,37 @@
 package todo;
 
-import java.util.List;
-
 public enum Menu {
-    DISPLAY_TASKS(1) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-            List<Task> tasks;
-            tasks = manager.getAllTasks();
-            if(tasks.isEmpty()){
-                System.out.println("Список задач пуст.");
-            }
-            else {
-                for (Task task : tasks) {
-                    System.out.println(task.toDisplay());
-                }
-            }
-        }
-    },
-    ADD_TASK(2) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-           /* System.out.println("Введите описание задачи: ");
-            String description;
-            description = console.nextLine().trim();
-            if(!description.isEmpty()){
-                System.out.println("Добавлена задача: " + manager.addTask(description).toDisplay());
-            }
-            else{
-                System.out.println("Добавьте описание задачи.");
-            } */
-        }
-    },
-    COMPLETE_TASK(3) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-            System.out.println("Введите id задачи: ");
-            int id = console.readInt();
-            if(manager.completeTask(id)){
-                System.out.println("Задача " + id + " выполнена.");
-            }
-            else{
-                System.out.println("Задачи под номером " + id + " не найдено.");
-            }
-        }
-    },
-    DELETE_TASK(4) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-            System.out.println("Введите id задачи: ");
-            int idToDelete = console.readInt();
-            if(manager.deleteTask(idToDelete))
-            {
-                System.out.println("Задача " + idToDelete + " удалена");
-            }
-            else{
-                System.out.println("Такой задачи нет.");
-            }
-        }
-    },
-    DISPLAY_COMPLETED_TASKS(5) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-            List<Task> completedTasks = manager.getCompletedTasks();
-            if(completedTasks.isEmpty()){
-                System.out.println("Нет выполненных задач.");
-            }
-            else {
-                for (Task task : completedTasks) {
-                    System.out.println(task.toDisplay());
-                }
-            }
-        }
-    },
-    DISPLAY_NOT_COMPLETED_TASKS(6) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-            List<Task> pendingTasks = manager.getPendingTasks();
-            if(pendingTasks.isEmpty()){
-                System.out.println("Нет невыполненных задач.");
-            }
-            else {
-                for (Task task : pendingTasks) {
-                    System.out.println(task.toDisplay());
-                }
-            }
-        }
-    },
-    EXIT(0) {
-        @Override
-        void menuAction(TaskManager manager, ConsoleUI console) {
-            ConsoleUI.exit = true;
-        }
-    };
+    DISPLAY_TASKS(1, "Показать все задачи"),
+    ADD_TASK(2, "Добавить задачу"),
+    COMPLETE_TASK(3, "Отметить задачу выполненной"),
+    DELETE_TASK(4, "Удалить задачу"),
+    DISPLAY_COMPLETED_TASKS(5, "Показать выполненные задачи"),
+    DISPLAY_NOT_COMPLETED_TASKS(6, "Показать невыполненные задачи"),
+    EXIT(0, "Выход");
 
-    Menu(int code) {
-        this.CODE = code;
+    private final int code;
+    private final String displayName;
+
+    Menu(int code, String displayName) {
+        this.code = code;
+        this.displayName = displayName;
     }
 
-    private final int CODE;
+    public int getCode(){
+        return code;
+    }
 
-    abstract void menuAction(TaskManager manager, ConsoleUI console);
+    public String getDisplayName(){
+        return displayName;
+    }
 
-    public static void getName(int i, TaskManager manager, ConsoleUI console){
-        boolean flag = false;
+    public static Menu getMenuObject(int code){
         for(Menu value : Menu.values()){
-            if(value.CODE == i){
-                value.menuAction(manager, console);
-                flag = true;
-                break;
+            if(value.getCode() == code){
+                return value;
             }
         }
-        if(!flag)
-            System.out.println("Введите корректное значение");
+        return null;
     }
+
 }

@@ -5,33 +5,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileStorage {
-    private final String My_File = "tasks.txt";
+    private static final String MY_FILE = "tasks.txt";
 
-    public void save(List<Task> tasks){
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(My_File))){
+    public void save(List<Task> tasks)  {
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(MY_FILE))){
             for(Task task : tasks){
                 writer.write(task.getId() + ":|" + task.getDescription() + ":|" + task.getStatus() + ":|" + task.getCreatedAt() + "\n");
             }
         }
-        catch(IOException e){
-            System.out.println("Ошибка потока");
+        catch (IOException e) {
+            throw new StorageException("Ошибка при сохранении", e);
         }
+
     }
 
-    public List<Task> load(){
+    public List<Task> load() {
         List<Task> tasks = new ArrayList<>();
-        try(BufferedReader reader = new BufferedReader(new FileReader(My_File))){
+        try(BufferedReader reader = new BufferedReader(new FileReader(MY_FILE))){
             String string;
             while((string = reader.readLine()) != null){
                 tasks.add(parseTaskFromString(string));
             }
+        } catch (FileNotFoundException e){
+            throw new StorageException("Файл для сохранения не найден", e);
         }
-        catch(FileNotFoundException e){
-            System.out.println("Файл не найден");
+        catch (IOException e) {
+            throw new StorageException("Ошибка потока", e);
         }
-        catch(IOException e){
-            System.out.println("Ошибка потока");
-        }
+
         return tasks;
     }
 

@@ -9,10 +9,17 @@ public class TaskManager {
     private final List<Task> tasks;
     private int nextId;
     private final FileStorage storage;
+    private boolean needSave = false;
 
     public TaskManager(FileStorage storage) {
         this.storage = storage;
-        this.tasks = storage.load();
+        this.nextId = 1;
+        this.tasks = new ArrayList<>();
+    }
+
+    public void loadTasks() {
+        tasks.clear();
+        tasks.addAll(storage.load());
         int tempId = 0;
         for(Task task : tasks){
             if(task.getId() > tempId)
@@ -24,6 +31,7 @@ public class TaskManager {
             }
         }
         this.nextId = tempId + 1;
+        needSave = false;
     }
 
     public Task addTask(String description) {
@@ -32,7 +40,7 @@ public class TaskManager {
         }
         Task task = new Task(nextId, description.trim());
         tasks.add(task);
-        storage.save(tasks);
+        needSave = true;
         nextId++;
         return task;
     }
@@ -50,11 +58,11 @@ public class TaskManager {
         return null;
     }
 
-    public boolean completeTask(int id) {
+    public boolean completeTask(int id){
         Task task = findTaskById(id);
         if (task != null) {
             task.complete();
-            storage.save(tasks);
+            needSave = true;
             return true;
         }
         return false;
@@ -65,7 +73,7 @@ public class TaskManager {
         while (iterator.hasNext()) {
             if (iterator.next().getId() == id) {
                 iterator.remove();
-                storage.save(tasks);
+                needSave = true;
                 return true;
             }
         }
@@ -90,6 +98,13 @@ public class TaskManager {
             }
         }
         return pendingTasks;
+    }
+
+    public void saveTasks(){
+        if(needSave){
+            storage.save(tasks);
+            needSave = false;
+        }
     }
 
 }
