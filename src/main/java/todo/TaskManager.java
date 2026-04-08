@@ -36,7 +36,7 @@ public class TaskManager {
 
     public Task addTask(String description) {
         if(description == null || description.trim().isEmpty()){
-            throw new IllegalArgumentException("Описание не может быть пустым");
+            throw new IllegalArgumentException();
         }
         Task task = new Task(nextId, description.trim());
         tasks.add(task);
@@ -90,7 +90,7 @@ public class TaskManager {
         return completedTasks;
     }
 
-    public List<Task> getPendingTasks(){
+    public List<Task> getNotCompletedTasks(){
         List<Task> pendingTasks = new ArrayList<>();
         for (Task task : tasks) {
             if (!task.isCompleted()){

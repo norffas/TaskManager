@@ -85,11 +85,11 @@ public class TaskManagerTest {
     @Test
     void completeTaskTest(){
         addTasks();
-        assertEquals(2, manager.getPendingTasks().size());
+        assertEquals(2, manager.getNotCompletedTasks().size());
         assertEquals(0, manager.getCompletedTasks().size());
         assertTrue(manager.completeTask(1));
         assertTrue(manager.findTaskById(1).isCompleted());
-        assertEquals(1, manager.getPendingTasks().size());
+        assertEquals(1, manager.getNotCompletedTasks().size());
         assertEquals(1, manager.getCompletedTasks().size());
         assertTrue(manager.completeTask(1));
         assertFalse(manager.completeTask(44));
@@ -117,15 +117,15 @@ public class TaskManagerTest {
     }
 
     @Test
-    void getPendingTasksTest(){
+    void getNotCompletedTasksTest(){
         addTasks();
-        assertEquals(2, manager.getPendingTasks().size());
+        assertEquals(2, manager.getNotCompletedTasks().size());
         manager.deleteTask(1);
-        assertEquals(1, manager.getPendingTasks().size());
+        assertEquals(1, manager.getNotCompletedTasks().size());
         assertEquals("qweqwe", manager.findTaskById(2).getDescription());
         manager.findTaskById(2).complete();
         assertTrue(manager.findTaskById(2).isCompleted());
-        assertEquals(0, manager.getPendingTasks().size());
+        assertEquals(0, manager.getNotCompletedTasks().size());
     }
 }
 
