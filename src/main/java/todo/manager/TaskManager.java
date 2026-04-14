@@ -1,4 +1,8 @@
-package todo;
+package todo.manager;
+
+import todo.*;
+import todo.model.Task;
+import todo.model.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -58,26 +62,28 @@ public class TaskManager {
         return null;
     }
 
-    public boolean completeTask(int id){
+    public TaskManagerOperationResult completeTask(int id){
         Task task = findTaskById(id);
-        if (task != null) {
-            task.complete();
-            needSave = true;
-            return true;
-        }
-        return false;
+        if(task == null)
+            return new TaskManagerOperationResult(OperationStatus.NOT_FOUND, task);
+        else if(task.isCompleted())
+            return new TaskManagerOperationResult(OperationStatus.ALREADY_COMPLETED, task);
+        task.complete();
+        needSave = true;
+        return new TaskManagerOperationResult(OperationStatus.COMPLETED_NOW, task);
     }
 
-    public boolean deleteTask(int id){
+    public TaskManagerOperationResult deleteTask(int id){
         Iterator<Task> iterator = tasks.iterator();
         while (iterator.hasNext()) {
-            if (iterator.next().getId() == id) {
-                iterator.remove();
-                needSave = true;
-                return true;
+           Task task = iterator.next();
+            if (task.getId() == id) {
+                    iterator.remove();
+                    needSave = true;
+                    return new TaskManagerOperationResult(OperationStatus.DELETED_NOW, task);
             }
         }
-        return false;
+        return new TaskManagerOperationResult(OperationStatus.NOT_FOUND, null);
     }
 
     public List<Task> getCompletedTasks(){

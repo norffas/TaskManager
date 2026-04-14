@@ -2,6 +2,8 @@ package todo;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import todo.manager.TaskManager;
+import todo.model.Task;
 
 import java.util.List;
 

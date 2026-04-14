@@ -1,10 +1,8 @@
 package todo.commands;
 
-import todo.Command;
-import todo.Task;
-import todo.TaskManager;
+import todo.manager.TaskManager;
 
-public class AddTask implements Command<Task> {
+public class AddTask implements Command{
     private final TaskManager manager;
     private final String description;
 
@@ -14,8 +12,8 @@ public class AddTask implements Command<Task> {
     }
 
     @Override
-    public Task execute() {
-        return manager.addTask(description);
+    public CommandResult execute() {
+        return new CommandResult("Задача успешно создана", manager.addTask(description));
 
     }
 }

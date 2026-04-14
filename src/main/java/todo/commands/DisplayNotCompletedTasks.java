@@ -1,12 +1,8 @@
 package todo.commands;
 
-import todo.Command;
-import todo.Task;
-import todo.TaskManager;
+import todo.manager.TaskManager;
 
-import java.util.List;
-
-public class DisplayNotCompletedTasks implements Command<List<Task>> {
+public class DisplayNotCompletedTasks implements Command {
     private final TaskManager manager;
 
     public DisplayNotCompletedTasks(TaskManager manager) {
@@ -14,7 +10,7 @@ public class DisplayNotCompletedTasks implements Command<List<Task>> {
     }
 
     @Override
-    public List<Task> execute() {
-        return manager.getNotCompletedTasks();
+    public CommandResult execute() {
+        return new CommandResult("Список невыполненных задач: ", manager.getNotCompletedTasks());
     }
 }

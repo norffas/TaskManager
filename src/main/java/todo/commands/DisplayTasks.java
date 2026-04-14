@@ -1,13 +1,8 @@
 package todo.commands;
 
-import todo.Command;
-import todo.Task;
-import todo.TaskManager;
+import todo.manager.TaskManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class DisplayTasks implements Command<List<Task>> {
+public class DisplayTasks implements Command {
     private final TaskManager manager;
 
     public DisplayTasks(TaskManager manager) {
@@ -15,9 +10,7 @@ public class DisplayTasks implements Command<List<Task>> {
     }
 
     @Override
-    public List<Task> execute() {
-        List<Task> tasks = new ArrayList<>();
-        tasks = manager.getAllTasks();
-        return tasks;
+    public CommandResult execute() {
+        return new CommandResult("Список всех задач: ", manager.getAllTasks());
     }
 }

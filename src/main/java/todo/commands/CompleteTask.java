@@ -1,9 +1,11 @@
 package todo.commands;
 
-import todo.Command;
-import todo.TaskManager;
+import todo.manager.OperationStatus;
+import todo.manager.TaskManager;
+import todo.manager.TaskManagerOperationResult;
+import todo.model.Task;
 
-public class CompleteTask implements Command<Boolean> {
+public class CompleteTask implements Command {
     private final int id;
     private final TaskManager manager;
 
@@ -13,7 +15,18 @@ public class CompleteTask implements Command<Boolean> {
     }
 
     @Override
-    public Boolean execute() {
-        return manager.completeTask(id);
+    public CommandResult execute(){
+        TaskManagerOperationResult tmResult = manager.completeTask(id);
+        Task task = tmResult.getTask();
+        OperationStatus status = tmResult.getStatus();
+        String msg;
+        if (status == OperationStatus.NOT_FOUND) {
+            msg = "Задача не найдена";
+        }
+        else if (status == OperationStatus.ALREADY_COMPLETED)
+            msg = "Задача уже выполнена";
+        else
+            msg = "Задаче успешно присвоен статус выполненной.";
+        return new CommandResult(msg, task);
     }
 }

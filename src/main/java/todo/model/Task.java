@@ -1,4 +1,4 @@
-package todo;
+package todo.model;
 
 import java.time.LocalDateTime;
 

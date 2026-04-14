@@ -1,9 +1,10 @@
 package todo.commands;
 
-import todo.Command;
-import todo.TaskManager;
+import todo.manager.OperationStatus;
+import todo.manager.TaskManager;
+import todo.manager.TaskManagerOperationResult;
 
-public class DeleteTask implements Command<Boolean> {
+public class DeleteTask implements Command {
     private final TaskManager manager;
     private final int id;
 
@@ -14,7 +15,12 @@ public class DeleteTask implements Command<Boolean> {
 
 
     @Override
-    public Boolean execute() {
-        return manager.deleteTask(id);
+    public CommandResult execute() {
+        TaskManagerOperationResult result = manager.deleteTask(id);
+        if(result.getStatus() == OperationStatus.NOT_FOUND)
+            return new CommandResult("Задача не найдена");
+        else{
+            return new CommandResult("Задача успешно удалена", result.getTask());
+        }
     }
 }

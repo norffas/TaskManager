@@ -1,4 +1,4 @@
-package todo;
+package todo.model;
 
 public enum TaskStatus {
     PENDING("в процессе"),

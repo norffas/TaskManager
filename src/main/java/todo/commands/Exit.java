@@ -1,9 +1,8 @@
 package todo.commands;
 
-import todo.Command;
-import todo.TaskManager;
+import todo.manager.TaskManager;
 
-public class Exit implements Command<Boolean> {
+public class Exit implements Command {
     private final TaskManager manager;
 
     public Exit(TaskManager manager) {
@@ -11,8 +10,8 @@ public class Exit implements Command<Boolean> {
     }
 
     @Override
-    public Boolean execute() {
+    public CommandResult execute() {
         manager.saveTasks();
-        return true;
+        return new CommandResult("Завершение выполнения программы. Все измененные данные сохранены.", true);
     }
 }
