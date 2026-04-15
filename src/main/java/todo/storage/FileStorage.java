@@ -1,4 +1,4 @@
-package todo;
+package todo.storage;
 
 import todo.model.Task;
 

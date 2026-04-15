@@ -1,4 +1,4 @@
-package todo;
+package todo.storage;
 
 public class StorageException extends RuntimeException {
     public StorageException(String message) {

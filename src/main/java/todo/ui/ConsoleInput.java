@@ -4,31 +4,33 @@ import java.util.Scanner;
 
 public class ConsoleInput {
     private final Scanner scanner;
+    private final ConsoleOutput output;
 
-    public ConsoleInput() {
+    public ConsoleInput(ConsoleOutput output) {
         this.scanner = new Scanner(System.in);
-    }
-
-    public String readLine(){
-        return scanner.nextLine();
+        this.output = output;
     }
 
     public String readNonEmptyLine(){
-       String line = scanner.nextLine();
-       if(line == null || line.trim().isEmpty()){
-           throw new ConsoleInputException("Строка не может быть null или пустой");
-       }
-       else{
-           return line.trim();
-       }
+        while(true){
+            String line = scanner.nextLine();
+            if(line == null || line.trim().isEmpty()){
+                output.printError("Строка не может быть null или пустой");
+            }
+            else{
+                return line.trim();
+            }
+        }
     }
 
     public int readInt(){
+        while(true){
             try {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                throw new ConsoleInputException("Введите корректное число", e);
+                output.printError("Введите корректное число");
             }
+        }
     }
 
     public void closeInput(){

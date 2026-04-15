@@ -9,7 +9,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskManagerTest {
+public class TaskManagerTest { // TODO Переделай класс с тестами, были переработаны методы TaskManager. Некоторые из методов возвращают другой результат.
     private TaskManager manager;
 
     @BeforeEach

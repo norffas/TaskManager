@@ -1,6 +1,6 @@
-package todo;
+package todo.commands;
 
-import todo.commands.*;
+import todo.ui.Menu;
 import todo.manager.TaskManager;
 
 import java.util.ArrayList;
@@ -21,11 +21,11 @@ public class CommandCreator {
             case DELETE_TASK:
                 params.add(Parameters.TASK_ID);
                 break;
-            case DISPLAY_COMPLETED_TASKS: // TODO объединить вывод для всех Display команд
-                break;
+            case DISPLAY_TASKS:
+            case DISPLAY_COMPLETED_TASKS:
+            case DISPLAY_NOT_COMPLETED_TASKS:
             case EXIT:
                 break;
-
             }
         return params;
     }
@@ -39,7 +39,11 @@ public class CommandCreator {
             case DELETE_TASK:
                 return new DeleteTask(manager, (Integer) params.get(Parameters.TASK_ID));
             case DISPLAY_TASKS:
-                return new DisplayTasks(manager);
+                return new DisplayTasks(manager, DisplayTasksFilter.ALL_TASKS);
+            case DISPLAY_COMPLETED_TASKS:
+                return new DisplayTasks(manager, DisplayTasksFilter.COMPLETED_TASKS);
+            case DISPLAY_NOT_COMPLETED_TASKS:
+                return new DisplayTasks(manager, DisplayTasksFilter.NOT_COMPLETED_TASKS);
             case EXIT:
                 return new Exit(manager);
             default:

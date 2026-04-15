@@ -1,9 +1,8 @@
 package todo.ui;
 
-import todo.CommandCreator;
-import todo.Menu;
-import todo.Parameters;
-import todo.StorageException;
+import todo.commands.CommandCreator;
+import todo.commands.Parameters;
+import todo.storage.StorageException;
 import todo.commands.CommandResult;
 import todo.manager.TaskManager;
 import todo.model.Task;
@@ -16,7 +15,7 @@ public class ConsoleUI {
     private final TaskManager manager;
     private boolean exit = false;
     private final ConsoleOutput output = new ConsoleOutput();
-    private final ConsoleInput input = new ConsoleInput();
+    private final ConsoleInput input = new ConsoleInput(output);
 
     public ConsoleUI(TaskManager manager) {
         this.manager = manager;
@@ -41,28 +40,31 @@ public class ConsoleUI {
             for (Parameters param : params){
                 switch (param){
                     case TASK_DESCRIPTION:
-                        output.printInputTaskDescription();
+                        output.printTaskDescriptionInputMessage();
                         parameters.put(param, input.readNonEmptyLine());
                         break;
                     case TASK_ID:
-                        output.printInputTaskId();
+                        output.printTaskIdInputMessage();
                         parameters.put(param, input.readInt());
                         break;
                     default:
                         output.printError("Введите корректную команду.");
                 }
             }
-            CommandResult result = commandCreator.createCommand(choice, manager, parameters).execute();
+            CommandResult result;
+            try{
+                result = commandCreator.createCommand(choice, manager, parameters).execute();
+            }catch (IllegalArgumentException e){
+                output.printError(e.getMessage());
+                continue;
+            }
             String message = result.getMessage();
             Task task = result.getTask();
             List<Task> tasks = result.getTasks();
             exit = result.isExit();
-            if(message != null)
-                output.printSuccess(message);
-            if(task != null)
-                output.printTask(task);
-            else if(tasks != null)
-                output.printTasks(tasks);
+            output.printMessage(message);
+            output.printTask(task);
+            output.printTasks(tasks);
         }
 
     }

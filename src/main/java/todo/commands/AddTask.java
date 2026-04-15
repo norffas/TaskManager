@@ -13,7 +13,11 @@ public class AddTask implements Command{
 
     @Override
     public CommandResult execute() {
-        return new CommandResult("Задача успешно создана", manager.addTask(description));
+        try {
+            return new CommandResult("Задача успешно создана", manager.addTask(description));
+        }catch (IllegalArgumentException e){
+            return new CommandResult("Не получилось создать задачу");
+        }
 
     }
 }

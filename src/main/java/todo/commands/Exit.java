@@ -1,6 +1,7 @@
 package todo.commands;
 
 import todo.manager.TaskManager;
+import todo.storage.StorageException;
 
 public class Exit implements Command {
     private final TaskManager manager;
@@ -11,7 +12,12 @@ public class Exit implements Command {
 
     @Override
     public CommandResult execute() {
-        manager.saveTasks();
-        return new CommandResult("Завершение выполнения программы. Все измененные данные сохранены.", true);
+        try {
+            manager.saveTasks();
+            return new CommandResult("Завершение выполнения программы. Все изменения сохранены.", true);
+        }
+        catch (StorageException e){
+            return new CommandResult("Ошибка при сохранении изменений. Попробуйте еще раз", false);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package todo;
+package todo.ui;
 
 public enum Menu {
     DISPLAY_TASKS(1, "Показать все задачи"),
