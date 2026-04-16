@@ -23,7 +23,8 @@ public class CommandCreator {
                 break;
             case DISPLAY_TASKS:
             case DISPLAY_COMPLETED_TASKS:
-            case DISPLAY_NOT_COMPLETED_TASKS:
+            case DISPLAY_PENDING_TASKS:
+            case DISPLAY_ABANDONED_TASKS:
             case EXIT:
                 break;
             }
@@ -42,8 +43,10 @@ public class CommandCreator {
                 return new DisplayTasks(manager, DisplayTasksFilter.ALL_TASKS);
             case DISPLAY_COMPLETED_TASKS:
                 return new DisplayTasks(manager, DisplayTasksFilter.COMPLETED_TASKS);
-            case DISPLAY_NOT_COMPLETED_TASKS:
-                return new DisplayTasks(manager, DisplayTasksFilter.NOT_COMPLETED_TASKS);
+            case DISPLAY_PENDING_TASKS:
+                return new DisplayTasks(manager, DisplayTasksFilter.PENDING_TASKS);
+            case DISPLAY_ABANDONED_TASKS:
+                return new DisplayTasks(manager, DisplayTasksFilter.ABANDONED_TASKS);
             case EXIT:
                 return new Exit(manager);
             default:

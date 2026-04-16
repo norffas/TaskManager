@@ -1,12 +1,13 @@
 package todo.ui;
 
 public enum Menu {
-    DISPLAY_TASKS(1, "Показать все задачи"),
-    ADD_TASK(2, "Добавить задачу"),
-    COMPLETE_TASK(3, "Отметить задачу выполненной"),
-    DELETE_TASK(4, "Удалить задачу"),
+    ADD_TASK(1, "Добавить задачу"),
+    COMPLETE_TASK(2, "Отметить задачу выполненной"),
+    DELETE_TASK(3, "Удалить задачу"),
+    DISPLAY_TASKS(4, "Показать все задачи"),
     DISPLAY_COMPLETED_TASKS(5, "Показать выполненные задачи"),
-    DISPLAY_NOT_COMPLETED_TASKS(6, "Показать невыполненные задачи"),
+    DISPLAY_PENDING_TASKS(6, "Показать невыполненные задачи"),
+    DISPLAY_ABANDONED_TASKS(7, "Показать заброшенные задачи"),
     EXIT(0, "Выход");
 
     private final int code;

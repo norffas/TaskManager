@@ -11,14 +11,16 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-public class ConsoleUI {
+public class UserInterface {
     private final TaskManager manager;
     private boolean exit = false;
-    private final ConsoleOutput output = new ConsoleOutput();
-    private final ConsoleInput input = new ConsoleInput(output);
+    private final Output output;
+    private final Input input;
 
-    public ConsoleUI(TaskManager manager) {
+    public UserInterface(TaskManager manager, Output output, Input input) {
         this.manager = manager;
+        this.output = output;
+        this.input = input;
     }
 
     public void start() {
@@ -28,7 +30,7 @@ public class ConsoleUI {
             System.out.println(e.getMessage());
         }
         CommandCreator commandCreator = new CommandCreator();
-        while (!exit) {
+        while (true) {
             output.printMenu();
             Menu choice = Menu.getMenuObject(input.readInt());
             if (choice == null) {
@@ -40,12 +42,12 @@ public class ConsoleUI {
             for (Parameters param : params){
                 switch (param){
                     case TASK_DESCRIPTION:
-                        output.printTaskDescriptionInputMessage();
-                        parameters.put(param, input.readNonEmptyLine());
+                        output.prompt("Введите описание задачи: ");
+                        parameters.put(param, readNonEmptyLineSafely());
                         break;
                     case TASK_ID:
-                        output.printTaskIdInputMessage();
-                        parameters.put(param, input.readInt());
+                        output.prompt("Введите номер задача: ");
+                        parameters.put(param, readIntSafely());
                         break;
                     default:
                         output.printError("Введите корректную команду.");
@@ -65,8 +67,34 @@ public class ConsoleUI {
             output.printMessage(message);
             output.printTask(task);
             output.printTasks(tasks);
+            if(exit){
+                input.closeInput();
+                break;
+            }
         }
 
+    }
+
+    int readIntSafely(){
+        while(true){
+            try {
+                return input.readInt();
+            }
+            catch (InputException e){
+                output.printError(e.getMessage());
+            }
+        }
+    }
+
+    String readNonEmptyLineSafely(){
+        while(true){
+            try{
+                return input.readNonEmptyLine();
+            }
+            catch (InputException e){
+                output.printError(e.getMessage());
+            }
+        }
     }
 
 }

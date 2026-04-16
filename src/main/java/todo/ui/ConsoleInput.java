@@ -2,35 +2,27 @@ package todo.ui;
 
 import java.util.Scanner;
 
-public class ConsoleInput {
+public class ConsoleInput implements Input {
     private final Scanner scanner;
-    private final ConsoleOutput output;
 
-    public ConsoleInput(ConsoleOutput output) {
+    public ConsoleInput() {
         this.scanner = new Scanner(System.in);
-        this.output = output;
     }
 
     public String readNonEmptyLine(){
-        while(true){
-            String line = scanner.nextLine();
-            if(line == null || line.trim().isEmpty()){
-                output.printError("Строка не может быть null или пустой");
-            }
-            else{
-                return line.trim();
-            }
-        }
+        String line = scanner.nextLine();
+        if(line == null || line.trim().isEmpty())
+            throw new InputException("Строка не может быть пустой");
+        else
+            return line.trim();
     }
 
     public int readInt(){
-        while(true){
             try {
                 return Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                output.printError("Введите корректное число");
+                throw new InputException("Введите корректное число");
             }
-        }
     }
 
     public void closeInput(){

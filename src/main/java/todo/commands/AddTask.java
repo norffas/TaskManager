@@ -1,6 +1,8 @@
 package todo.commands;
 
+import todo.manager.OperationStatus;
 import todo.manager.TaskManager;
+import todo.manager.TaskManagerOperationResult;
 
 public class AddTask implements Command{
     private final TaskManager manager;
@@ -13,11 +15,12 @@ public class AddTask implements Command{
 
     @Override
     public CommandResult execute() {
-        try {
-            return new CommandResult("Задача успешно создана", manager.addTask(description));
-        }catch (IllegalArgumentException e){
-            return new CommandResult("Не получилось создать задачу");
+        TaskManagerOperationResult result = manager.addTask(description);
+        if(result.getStatus() == OperationStatus.ADDED){
+            return new CommandResult("Задача успешно создана", result.getTask());
         }
-
+        else{
+            return new CommandResult("Не удалось добавить задачу.");
+        }
     }
 }

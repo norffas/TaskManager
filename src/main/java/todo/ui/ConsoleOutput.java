@@ -4,7 +4,7 @@ import todo.model.Task;
 
 import java.util.List;
 
-public class ConsoleOutput {
+public class ConsoleOutput implements Output {
 
     public void printError(String message){
         if(message == null)
@@ -20,6 +20,10 @@ public class ConsoleOutput {
         }
     }
 
+    public void prompt(String string){
+        System.out.print(string);
+    }
+
     public void printTask(Task task){
         if (task != null)
             System.out.println(task.toDisplay());
@@ -28,14 +32,6 @@ public class ConsoleOutput {
     public void printMessage(String message){
         if (message != null)
             System.out.println(message);
-    }
-
-    public void printTaskIdInputMessage(){
-        System.out.println("Введите id задачи: ");
-    }
-
-    public void printTaskDescriptionInputMessage(){
-        System.out.println("Введите описание задачи: ");
     }
 
     public void printTasks(List<Task> tasks){

@@ -17,7 +17,9 @@ public class DisplayTasks implements Command {
             return new CommandResult("Список всех задач: ", manager.getAllTasks());
         else if(filter == DisplayTasksFilter.COMPLETED_TASKS)
             return new CommandResult("Список выполненных задач: ", manager.getCompletedTasks());
+        else if(filter == DisplayTasksFilter.PENDING_TASKS)
+            return new CommandResult("Список невыполненных задач: ", manager.getPendingTasks());
         else
-            return new CommandResult("Список невыполненных задач: ", manager.getNotCompletedTasks());
+            return new CommandResult("Список заброшенных задач: ", manager.getAbandonedTasks());
     }
 }

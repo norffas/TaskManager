@@ -2,14 +2,17 @@ package todo;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import todo.manager.OperationStatus;
 import todo.manager.TaskManager;
+import todo.manager.TaskManagerOperationResult;
 import todo.model.Task;
+import todo.model.TaskStatus;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TaskManagerTest { // TODO Переделай класс с тестами, были переработаны методы TaskManager. Некоторые из методов возвращают другой результат.
+public class TaskManagerTest { //
     private TaskManager manager;
 
     @BeforeEach
@@ -20,23 +23,19 @@ public class TaskManagerTest { // TODO Переделай класс с тест
 
     @Test
     public void addTaskTest(){
-        Task task = manager.addTask("asdasd");
+        Task task = manager.addTask("asdasd").getTask();
         assertNotNull(task);
-        assertEquals(task, manager.findTaskById(1));
-        assertThrows(IllegalArgumentException.class, () -> {
-            manager.addTask("");
-        });
-        assertThrows(IllegalArgumentException.class, () -> {
-            manager.addTask(" ");
-        });
-        assertThrows(IllegalArgumentException.class, () -> manager.addTask(null));
-        assertThrows(IllegalArgumentException.class, () -> manager.addTask(" \n "));
+        assertEquals(OperationStatus.NOT_ADDED, manager.addTask("").getStatus());
+        assertEquals(TaskStatus.PENDING, task.getStatus());
+        assertEquals(OperationStatus.NOT_ADDED, manager.addTask(" ").getStatus());
+        assertEquals(OperationStatus.NOT_ADDED, manager.addTask("\n").getStatus());
+        assertEquals(OperationStatus.NOT_ADDED, manager.addTask(null).getStatus());
     }
 
     @Test
-    void addTaskTestWithInvalidSyntax(){
+    void addTaskWithEmptyDescription(){
         assertEquals(0, manager.getAllTasks().size());
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertDoesNotThrow( () -> {
             manager.addTask(" ");
         });
         assertEquals(0, manager.getAllTasks().size());
@@ -66,46 +65,33 @@ public class TaskManagerTest { // TODO Переделай класс с тест
         assertEquals(1, manager.getAllTasks().size());
     }
 
-    void addTasks(){
+    private void addTasks(){
         manager.addTask("aaaaaaaaa");
         manager.addTask("qweqwe");
     }
 
     @Test
-    void findTaskByIdTest(){
-        addTasks();
-        assertEquals("aaaaaaaaa", manager.findTaskById(1).getDescription());
-        assertEquals(1, manager.findTaskById(1).getId());
-        assertFalse(manager.findTaskById(1).isCompleted());
-        assertNull(manager.findTaskById(3));
-        assertNull(manager.findTaskById(-1));
-        assertNull(manager.findTaskById(0));
-        manager.deleteTask(1);
-        assertNull(manager.findTaskById(1));
-    }
-
-    @Test
     void completeTaskTest(){
         addTasks();
-        assertEquals(2, manager.getNotCompletedTasks().size());
+        assertEquals(2, manager.getPendingTasks().size());
         assertEquals(0, manager.getCompletedTasks().size());
-        assertTrue(manager.completeTask(1));
-        assertTrue(manager.findTaskById(1).isCompleted());
-        assertEquals(1, manager.getNotCompletedTasks().size());
+        assertEquals(OperationStatus.COMPLETED_NOW, manager.completeTask(1).getStatus());
+        assertEquals(1, manager.getPendingTasks().size());
         assertEquals(1, manager.getCompletedTasks().size());
-        assertTrue(manager.completeTask(1));
-        assertFalse(manager.completeTask(44));
+        assertEquals(OperationStatus.NOT_FOUND, manager.completeTask(44).getStatus());
+        assertEquals(OperationStatus.ALREADY_COMPLETED, manager.completeTask(1).getStatus());
+        TaskManagerOperationResult result = manager.completeTask(2);
+        assertEquals( OperationStatus.COMPLETED_NOW, result.getStatus());
     }
 
     @Test
     void deleteTaskTest(){
         addTasks();
         assertEquals(2, manager.getAllTasks().size());
-        assertTrue(manager.deleteTask(1));
+        assertEquals(OperationStatus.DELETED_NOW, manager.deleteTask(1).getStatus());
         assertEquals(1, manager.getAllTasks().size());
-        assertNull(manager.findTaskById(1));
-        assertFalse(manager.deleteTask(1));
-        assertFalse(manager.deleteTask(1233));
+        assertNull(manager.deleteTask(15).getTask());
+        assertEquals(OperationStatus.NOT_FOUND, manager.deleteTask(1).getStatus());
     }
 
     @Test
@@ -113,21 +99,18 @@ public class TaskManagerTest { // TODO Переделай класс с тест
         addTasks();
         manager.completeTask(1);
         assertEquals(1, manager.getCompletedTasks().size());
-        assertEquals(manager.findTaskById(1), manager.getCompletedTasks().get(0));
         manager.deleteTask(1);
         assertEquals(0, manager.getCompletedTasks().size());
     }
 
     @Test
-    void getNotCompletedTasksTest(){
+    void getPendingTasksTest(){
         addTasks();
-        assertEquals(2, manager.getNotCompletedTasks().size());
+        assertEquals(2, manager.getPendingTasks().size());
         manager.deleteTask(1);
-        assertEquals(1, manager.getNotCompletedTasks().size());
-        assertEquals("qweqwe", manager.findTaskById(2).getDescription());
-        manager.findTaskById(2).complete();
-        assertTrue(manager.findTaskById(2).isCompleted());
-        assertEquals(0, manager.getNotCompletedTasks().size());
+        assertEquals(1, manager.getPendingTasks().size());
+        manager.completeTask(2);
+        assertEquals(0, manager.getPendingTasks().size());
     }
 }
 
