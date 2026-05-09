@@ -1,7 +1,10 @@
 package todo.manager;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import todo.model.Task;
 import todo.model.TaskStatus;
+import todo.storage.FileStorage;
 import todo.storage.Storage;
 
 import java.time.LocalDateTime;
@@ -14,6 +17,7 @@ public class TaskManager {
     private int nextId;
     private final Storage storage;
     private boolean needSave = false;
+    private static final Logger logger = LoggerFactory.getLogger(TaskManager.class);
 
     public TaskManager(Storage storage) {
         this.storage = storage;
@@ -43,6 +47,7 @@ public class TaskManager {
         for (Task task : tasks) {
             if (task.getStatus() == TaskStatus.PENDING && task.getCreatedAt().isBefore(LocalDateTime.now().minusDays(20))) {
                 task.setStatus(TaskStatus.ABANDONED);
+                logger.info("Задача {} теперь имеет статус {}", task.getId(), TaskStatus.ABANDONED);
                 hasUpdates = true;
             }
         }

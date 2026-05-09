@@ -1,5 +1,7 @@
 package todo.commands;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import todo.ui.Menu;
 import todo.manager.TaskManager;
 
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CommandCreator {
+    private static final Logger logger = LoggerFactory.getLogger(CommandCreator.class);
 
     public List<Parameters> getParameters(Menu menu){
         List<Parameters> params = new ArrayList<>();
@@ -27,7 +30,8 @@ public class CommandCreator {
             case DISPLAY_ABANDONED_TASKS:
             case EXIT:
                 break;
-            }
+        }
+        logger.debug("Для пункта меню {} требуются следующие параметры: {}", menu, params);
         return params;
     }
 
@@ -50,6 +54,7 @@ public class CommandCreator {
             case EXIT:
                 return new Exit(manager);
             default:
+                logger.warn("Команды для пункта меню {} нет", menu);
                 throw new IllegalArgumentException("Такой команды для создания нет.");
         }
     }

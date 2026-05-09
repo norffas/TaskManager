@@ -17,10 +17,10 @@ public class FileStorage implements Storage {
             for(Task task : tasks){
                 writer.write(task.getId() + ":|" + task.getDescription() + ":|" + task.getStatus() + ":|" + task.getCreatedAt() + "\n");
             }
-            logger.info("Данные успешно сохранились в файл " + MY_FILE);
+            logger.info("Данные успешно сохранились в файл {}", MY_FILE);
         }
         catch (IOException e) {
-            logger.error("При попытке сохранить данные в tasks.txt произошла ошибка потока.");
+            logger.error("При попытке сохранить задачи в {} произошла ошибка.", MY_FILE, e);
             throw new StorageException("Ошибка при сохранении", e);
         }
 
@@ -33,12 +33,13 @@ public class FileStorage implements Storage {
             while((string = reader.readLine()) != null){
                 tasks.add(parseTaskFromString(string));
             }
+            logger.info("Данные из файла {} успешно загружены.", MY_FILE);
         } catch (FileNotFoundException e){
-            logger.info("Файл tasks.txt для загрузки данных в работу не найден. Если пользователь новый - нормальная ситуация.");
-            // для новых пользователей файл будет создан для новых пользователей, нормальное поведение
+            logger.info("Файл {} для загрузки данных в работу не найден, используется пустой список задач.", MY_FILE);
+            // для новых пользователей файл будет создан, не является ошибкой
         }
         catch (IOException e) {
-            logger.error("Упс. Не удалось загрузить данные из файла tasks.txt. Программа нашла данный файл, но загрузка прервалась.");
+            logger.error("Ошибка при попытке считать данные из файла {}.", MY_FILE, e);
             throw new StorageException("Ошибка потока", e);
         }
 

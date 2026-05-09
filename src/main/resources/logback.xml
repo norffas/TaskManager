@@ -1,0 +1,12 @@
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %highlight(%d %logger %level %message) %n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="trace">
+        <appender-ref ref="Console"/>
+    </root>
+</configuration>
