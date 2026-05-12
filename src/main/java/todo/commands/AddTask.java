@@ -19,6 +19,12 @@ public class AddTask implements Command{
         if(result.getStatus() == OperationStatus.ADDED){
             return new CommandResult("Задача успешно создана", result.getTask());
         }
+        else if(result.getStatus() == OperationStatus.NOT_ADDED_INVALID_DESCRIPTION){
+            return  new CommandResult("Описание задачи содержит запрещенные символы.");
+        }
+        else if(result.getStatus() == OperationStatus.NOT_ADDED_EMPTY_DESCRIPTION){
+            return new CommandResult("Описание задачи не может быть пустым.");
+        }
         else{
             return new CommandResult("Не удалось добавить задачу.");
         }

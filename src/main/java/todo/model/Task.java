@@ -23,11 +23,11 @@ public class Task {
         this.createdAt = LocalDateTime.now();
     }
 
-    public Task(int id, String description, String status, String time){
+    public Task(int id, String description, TaskStatus status, LocalDateTime createdAt){
         this.id = id;
         this.description = description;
-        this.status = TaskStatus.valueOf(status);
-        this.createdAt = LocalDateTime.parse(time);
+        this.status = status;
+        this.createdAt = createdAt;
     }
 
     public boolean isCompleted() {

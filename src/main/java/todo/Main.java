@@ -1,15 +1,15 @@
 package todo;
 
 
+import todo.storage.database.DatabaseStorage;
 import todo.manager.TaskManager;
-import todo.storage.FileStorage;
 import todo.ui.ConsoleInput;
 import todo.ui.ConsoleOutput;
 import todo.ui.UserInterface;
 
 public class Main {
     public static void main(String[] args) {
-        FileStorage storage = new FileStorage();
+        DatabaseStorage storage = new DatabaseStorage();
         TaskManager manager = new TaskManager(storage);
         ConsoleOutput output = new ConsoleOutput();
         ConsoleInput input = new ConsoleInput();

@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import todo.model.Task;
 import todo.model.TaskStatus;
-import todo.storage.FileStorage;
 import todo.storage.Storage;
 
 import java.time.LocalDateTime;
@@ -56,9 +55,12 @@ public class TaskManager {
 
     public TaskManagerOperationResult addTask(String description) {
         if(description == null || description.trim().isEmpty()){
-            return new TaskManagerOperationResult(OperationStatus.NOT_ADDED, null);
+            return new TaskManagerOperationResult(OperationStatus.NOT_ADDED_EMPTY_DESCRIPTION, null);
         }
-        Task task = new Task(nextId, description.trim());
+        description = description.trim();
+        if(!isValidDescription(description))
+            return new TaskManagerOperationResult(OperationStatus.NOT_ADDED_INVALID_DESCRIPTION, null);
+        Task task = new Task(nextId, description);
         tasks.add(task);
         needSave = true;
         nextId++;
@@ -131,11 +133,15 @@ public class TaskManager {
             return abandonedTasks;
     }
 
-    public void saveTasks(){
+    public void saveTasks(){ // TODO подумать об отдельном потоке, который спустя время будет вызывать этот метод
         if(needSave){
             storage.save(tasks);
             needSave = false;
         }
+    }
+
+    private boolean isValidDescription(String description){
+        return description.matches("[\\p{L}\\p{N} :,.?!\\-\\[\\]{}\\\\/]+") && description.matches(".*[\\p{L}\\p{N}].*");
     }
 
 }

@@ -27,12 +27,12 @@ public class UserInterface {
         try {
             manager.loadTasks();
         } catch (StorageException e) {
-            System.out.println(e.getMessage());
+            output.printError(e.getMessage());
         }
         CommandCreator commandCreator = new CommandCreator();
         while (true) {
             output.printMenu();
-            Menu choice = Menu.getMenuObject(input.readInt());
+            Menu choice = Menu.getMenuObject(readIntSafely());
             if (choice == null) {
                 output.printError("Ошибка ввода");
                 continue;

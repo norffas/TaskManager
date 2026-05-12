@@ -10,13 +10,8 @@
 *.iws
 *.ipr
 
-# Build tools
+# Maven
 target/
-build/
-.gradle/
-.mvn/
-mvnw
-mvnw.cmd
 
 # System
 .DS_Store

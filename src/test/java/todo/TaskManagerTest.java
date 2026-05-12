@@ -23,32 +23,41 @@ public class TaskManagerTest { //
 
     @Test
     public void addTaskTest(){
-        Task task = manager.addTask("asdasd").getTask();
+        Task task = manager.addTask("qwerty").getTask();
         assertNotNull(task);
-        assertEquals(OperationStatus.NOT_ADDED, manager.addTask("").getStatus());
         assertEquals(TaskStatus.PENDING, task.getStatus());
-        assertEquals(OperationStatus.NOT_ADDED, manager.addTask(" ").getStatus());
-        assertEquals(OperationStatus.NOT_ADDED, manager.addTask("\n").getStatus());
-        assertEquals(OperationStatus.NOT_ADDED, manager.addTask(null).getStatus());
+        assertEquals(OperationStatus.ADDED, manager.addTask("qwe").getStatus());
     }
 
     @Test
     void addTaskWithEmptyDescription(){
         assertEquals(0, manager.getAllTasks().size());
-        assertDoesNotThrow( () -> {
-            manager.addTask(" ");
-        });
+        assertEquals(OperationStatus.NOT_ADDED_EMPTY_DESCRIPTION, manager.addTask(" ").getStatus());
+        assertEquals(OperationStatus.NOT_ADDED_EMPTY_DESCRIPTION, manager.addTask("").getStatus());
+        assertEquals(OperationStatus.NOT_ADDED_EMPTY_DESCRIPTION, manager.addTask(null).getStatus());
         assertEquals(0, manager.getAllTasks().size());
+    }
+
+    @Test
+    void addTaskWithNotValidDescription(){
+        assertEquals(OperationStatus.NOT_ADDED_INVALID_DESCRIPTION, manager.addTask("S\nS").getStatus());
+        assertEquals(OperationStatus.NOT_ADDED_INVALID_DESCRIPTION, manager.addTask(":").getStatus());
+    }
+
+    @Test
+    void addTaskWithNotValidDescriptionCheckNumberTasks(){
+        manager.addTask("  S      \n  S   \n");
+        assertEquals(0, manager.getAllTasks().size());
+        manager.addTask(":");
+        Task task = manager.addTask("test").getTask();
+        assertEquals(1, task.getId());
     }
 
     @Test
     void addTaskShouldTrimSpaces(){
         manager.addTask("         S     ");
         assertEquals("S", manager.findTaskById(1).getDescription());
-        manager.addTask(" \n E \n ");
-        assertEquals("E", manager.findTaskById(2).getDescription());
-        manager.addTask(" S \n S ");
-        assertEquals("S \n S", manager.findTaskById(3).getDescription());
+        assertEquals(OperationStatus.ADDED, manager.addTask("S\n").getStatus());
     }
 
     @Test
