@@ -1,4 +1,4 @@
-package todo.manager;
+package todo.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +11,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class TaskManager {
+public class TaskService {
     private final List<Task> tasks;
     private int nextId;
     private final Storage storage;
     private boolean needSave = false;
-    private static final Logger logger = LoggerFactory.getLogger(TaskManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
-    public TaskManager(Storage storage) {
+    public TaskService(Storage storage) {
         this.storage = storage;
         this.nextId = 1;
         this.tasks = new ArrayList<>();
@@ -53,7 +53,7 @@ public class TaskManager {
         return hasUpdates;
     }
 
-    public TaskManagerOperationResult addTask(String description) {
+    public synchronized TaskManagerOperationResult addTask(String description) {
         if(description == null || description.trim().isEmpty()){
             return new TaskManagerOperationResult(OperationStatus.NOT_ADDED_EMPTY_DESCRIPTION, null);
         }
@@ -67,20 +67,18 @@ public class TaskManager {
         return new TaskManagerOperationResult(OperationStatus.ADDED, task);
     }
 
-    public List<Task> getAllTasks() {
+    public synchronized List<Task> getAllTasks() {
         return new ArrayList<>(tasks);
     }
 
     public Task findTaskById(int id) {
-        for (Task task : tasks) {
-            if (task.getId() == id) {
-                return task;
-            }
-        }
-        return null;
+        return tasks.stream()
+                .filter(task -> task.getId() == id)
+                .findAny()
+                .orElse(null);
     }
 
-    public TaskManagerOperationResult completeTask(int id){
+    public synchronized TaskManagerOperationResult completeTask(int id){
         Task task = findTaskById(id);
         if(task == null)
             return new TaskManagerOperationResult(OperationStatus.NOT_FOUND, task);
@@ -91,7 +89,7 @@ public class TaskManager {
         return new TaskManagerOperationResult(OperationStatus.COMPLETED_NOW, task);
     }
 
-    public TaskManagerOperationResult deleteTask(int id){
+    public synchronized TaskManagerOperationResult deleteTask(int id){
         Iterator<Task> iterator = tasks.iterator();
         while (iterator.hasNext()) {
            Task task = iterator.next();
@@ -104,38 +102,27 @@ public class TaskManager {
         return new TaskManagerOperationResult(OperationStatus.NOT_FOUND, null);
     }
 
-    public List<Task> getCompletedTasks(){
-        List<Task> completedTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.isCompleted()){
-                completedTasks.add(task);
-            }
-        }
-        return completedTasks;
+    public synchronized List<Task> getCompletedTasks(){
+        return tasks.stream()
+                .filter(task -> task.isCompleted())
+                .toList();
     }
 
-    public List<Task> getPendingTasks(){
-        List<Task> pendingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getStatus() == TaskStatus.PENDING){
-                pendingTasks.add(task);
-            }
-        }
-        return pendingTasks;
+    public synchronized List<Task> getPendingTasks(){
+        return tasks.stream()
+                .filter(task -> task.getStatus() == TaskStatus.PENDING)
+                .toList();
     }
 
-    public List<Task> getAbandonedTasks(){
-        List<Task> abandonedTasks = new ArrayList<>();
-            for(Task task : tasks){
-                if(task.getStatus() == TaskStatus.ABANDONED)
-                    abandonedTasks.add(task);
-            }
-            return abandonedTasks;
+    public synchronized List<Task> getAbandonedTasks(){
+        return tasks.stream()
+                .filter(task -> task.getStatus() == TaskStatus.ABANDONED)
+                .toList();
     }
 
-    public void saveTasks(){ // TODO подумать об отдельном потоке, который спустя время будет вызывать этот метод
+    public synchronized void saveTasks(){ // TODO подумать об отдельном потоке, который спустя время будет вызывать этот метод
         if(needSave){
-            storage.save(tasks);
+            storage.save(new ArrayList<>(tasks));
             needSave = false;
         }
     }

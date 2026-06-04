@@ -1,14 +1,14 @@
 package todo.commands;
 
-import todo.manager.OperationStatus;
-import todo.manager.TaskManager;
-import todo.manager.TaskManagerOperationResult;
+import todo.service.OperationStatus;
+import todo.service.TaskService;
+import todo.service.TaskManagerOperationResult;
 
 public class AddTask implements Command{
-    private final TaskManager manager;
+    private final TaskService manager;
     private final String description;
 
-    public AddTask(TaskManager manager, String description) {
+    public AddTask(TaskService manager, String description) {
         this.description = description;
         this.manager = manager;
     }

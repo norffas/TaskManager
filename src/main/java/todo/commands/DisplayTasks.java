@@ -1,12 +1,12 @@
 package todo.commands;
 
-import todo.manager.TaskManager;
+import todo.service.TaskService;
 
 public class DisplayTasks implements Command {
-    private final TaskManager manager;
+    private final TaskService manager;
     private final DisplayTasksFilter filter;
 
-    public DisplayTasks(TaskManager manager, DisplayTasksFilter filter) {
+    public DisplayTasks(TaskService manager, DisplayTasksFilter filter) {
         this.manager = manager;
         this.filter = filter;
     }

@@ -2,24 +2,68 @@ package todo;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import todo.manager.OperationStatus;
-import todo.manager.TaskManager;
-import todo.manager.TaskManagerOperationResult;
+import todo.service.OperationStatus;
+import todo.service.TaskService;
+import todo.service.TaskManagerOperationResult;
 import todo.model.Task;
 import todo.model.TaskStatus;
+import todo.storage.Storage;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.*;
 
-public class TaskManagerTest { //
-    private TaskManager manager;
+public class TaskServiceTest { //
+    private TaskService manager;
 
     @BeforeEach
     void setUp(){
-        manager = new TaskManager(new StorageForTests());
+        manager = new TaskService(new StorageForTests());
     }
 
+
+    @Test
+    public void shouldSaveTasks(){
+        Storage storage = mock(Storage.class);
+        TaskService manager = new TaskService(storage);
+        manager.addTask("heh");
+        manager.saveTasks();
+        manager.saveTasks();
+        verify(storage, times(1)).save(anyList());
+    }
+
+    @Test
+    public void shouldNotSaveTasks(){
+        Storage storage = mock(Storage.class);
+        TaskService manager = new TaskService(storage);
+        manager.getAllTasks();
+        manager.getPendingTasks();
+        manager.saveTasks();
+        verify(storage, never()).save(anyList());
+    }
+
+    @Test
+    public void shouldLoadTasks(){
+        Storage storage = mock(Storage.class);
+        TaskService manager = new TaskService(storage);
+        manager.loadTasks();
+        verify(storage).load();
+    }
+
+    @Test
+    public void shouldUpdateAbandonedStatus(){
+        Storage storage = mock(Storage.class);
+        TaskService manager = new TaskService(storage);
+        Task task = new Task(1, "hehe", TaskStatus.PENDING, LocalDateTime.now().minusMonths(1));
+        when(storage.load()).thenReturn(List.of(task));
+        manager.loadTasks();
+        manager.saveTasks();
+        assertEquals(task.getStatus(), TaskStatus.ABANDONED);
+        verify(storage).save(anyList());
+    }
 
     @Test
     public void addTaskTest(){

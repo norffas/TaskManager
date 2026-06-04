@@ -1,15 +1,15 @@
 package todo.commands;
 
-import todo.manager.OperationStatus;
-import todo.manager.TaskManager;
-import todo.manager.TaskManagerOperationResult;
+import todo.service.OperationStatus;
+import todo.service.TaskService;
+import todo.service.TaskManagerOperationResult;
 import todo.model.Task;
 
 public class CompleteTask implements Command {
     private final int id;
-    private final TaskManager manager;
+    private final TaskService manager;
 
-    public CompleteTask(TaskManager manager, int id) {
+    public CompleteTask(TaskService manager, int id) {
         this.id = id;
         this.manager = manager;
     }

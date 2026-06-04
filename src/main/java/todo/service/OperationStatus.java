@@ -1,4 +1,4 @@
-package todo.manager;
+package todo.service;
 
 public enum OperationStatus {
     NOT_FOUND,

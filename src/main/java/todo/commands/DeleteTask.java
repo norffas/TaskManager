@@ -1,14 +1,14 @@
 package todo.commands;
 
-import todo.manager.OperationStatus;
-import todo.manager.TaskManager;
-import todo.manager.TaskManagerOperationResult;
+import todo.service.OperationStatus;
+import todo.service.TaskService;
+import todo.service.TaskManagerOperationResult;
 
 public class DeleteTask implements Command {
-    private final TaskManager manager;
+    private final TaskService manager;
     private final int id;
 
-    public DeleteTask(TaskManager manager, int id) {
+    public DeleteTask(TaskService manager, int id) {
         this.manager = manager;
         this.id = id;
     }

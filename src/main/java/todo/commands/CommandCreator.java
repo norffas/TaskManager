@@ -3,7 +3,7 @@ package todo.commands;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import todo.ui.Menu;
-import todo.manager.TaskManager;
+import todo.service.TaskService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class CommandCreator {
         return params;
     }
 
-    public Command createCommand(Menu menu, TaskManager manager, Map<Parameters, Object> params){
+    public Command createCommand(Menu menu, TaskService manager, Map<Parameters, Object> params){
         switch (menu){
             case ADD_TASK:
                 return new AddTask(manager, (String) params.get(Parameters.TASK_DESCRIPTION));

@@ -1,12 +1,12 @@
 package todo.commands;
 
-import todo.manager.TaskManager;
+import todo.service.TaskService;
 import todo.storage.StorageException;
 
 public class Exit implements Command {
-    private final TaskManager manager;
+    private final TaskService manager;
 
-    public Exit(TaskManager manager) {
+    public Exit(TaskService manager) {
         this.manager = manager;
     }
 
