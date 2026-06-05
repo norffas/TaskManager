@@ -14,13 +14,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaskRepository implements Repository {
-    private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
+public class DatabaseRepo implements Repository {
+    private static final Logger logger = LoggerFactory.getLogger(DatabaseRepo.class);
     private static final String ARGUMENTS = "databaseArguments";
 
     @Override
-    public Task saveTask(String description){
-        Task task = new Task(-1, description);
+    public Task saveTask(Task task){
         try(Connection connection = connectBase()){
             try(PreparedStatement preparedStatement = connection.prepareStatement
                     ("INSERT INTO tasks(description, task_status, created_at) Values(?, ?, ?) Returning id")) {
@@ -28,15 +27,21 @@ public class TaskRepository implements Repository {
                 preparedStatement.setString(2, task.getStatus().name());
                 preparedStatement.setObject(3, task.getCreatedAt());
                 try (ResultSet returnData = preparedStatement.executeQuery()){
-                    if(returnData.next())
+                    if(returnData.next()){
                         task = new Task(returnData.getInt(1), task.getDescription(), task.getStatus(), task.getCreatedAt());
-                    else
-                        throw new RuntimeException();
+                        logger.info("Задача добавлена в базу данных.");
+                    }
+                    else{
+                        logger.warn("Не удалось добавить задачу при корректных входных данных в базу данных.");
+                        throw new RepositoryException("Не удалось добавить задачу.");
+                    }
+
                 }
             }
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
         }
         return task;
     }
@@ -55,13 +60,14 @@ public class TaskRepository implements Repository {
                                 returnData.getObject(4, LocalDateTime.class));
                     }
                     else{
-                        throw new RuntimeException();
+                        return null;
                     }
                 }
             }
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
         }
     }
 
@@ -78,12 +84,13 @@ public class TaskRepository implements Repository {
                                 returnData.getObject(4, LocalDateTime.class));
                     }
                     else
-                        throw new RuntimeException();
+                        return null;
                 }
             }
         }
         catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
         }
     }
 
@@ -92,19 +99,20 @@ public class TaskRepository implements Repository {
         try(Connection connection = connectBase()){
             try(PreparedStatement preparedStatement = connection.prepareStatement
                     ("UPDATE tasks SET task_status = ? WHERE id = ? RETURNING description, created_at")){
-                preparedStatement.setString(1, String.valueOf(status));
+                preparedStatement.setString(1, status.name());
                 preparedStatement.setInt(2, id);
                 try(ResultSet returnData = preparedStatement.executeQuery()){
                    if(returnData.next()){
                        return new Task(id, returnData.getString(1), status, returnData.getObject(2, LocalDateTime.class));
                    }
                    else
-                       throw new RuntimeException();
+                       return null;
                }
             }
         }
         catch(SQLException e){
-            throw new RuntimeException();
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
         }
     }
 
@@ -114,31 +122,63 @@ public class TaskRepository implements Repository {
         try(Connection connection = connectBase()){
             try(PreparedStatement preparedStatement = connection.prepareStatement
                     ("SELECT * FROM tasks")){
-                ResultSet returnData = preparedStatement.executeQuery();
-                while(returnData.next()){
-                    tasks.add(new Task(returnData.getInt(1),
-                            returnData.getString(2),
-                            TaskStatus.valueOf(returnData.getString(3)),
-                            returnData.getObject(4, LocalDateTime.class)));
+                try(ResultSet returnData = preparedStatement.executeQuery()){
+                    while(returnData.next()){
+                        tasks.add(new Task(returnData.getInt(1),
+                                returnData.getString(2),
+                                TaskStatus.valueOf(returnData.getString(3)),
+                                returnData.getObject(4, LocalDateTime.class)));
+                    }
                 }
             }
         }
         catch(SQLException e){
-            throw new RuntimeException();
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
         }
         return tasks;
     }
 
-    public void createTable() throws SQLException {
-        Connection connection = connectBase();
-        Statement statement = connection.createStatement();
-        statement.execute("CREATE TABLE IF NOT EXISTS tasks " +
-                "(id INT PRIMARY KEY, " +
-                "description TEXT NOT NULL, " +
-                "task_status VARCHAR(20) NOT NULL," +
-                "created_at TIMESTAMP NOT NULL)");
-        statement.close();
-        connection.close();
+    @Override
+    public List<Task> findTasksByStatus(TaskStatus status){
+        List<Task> tasks = new ArrayList<>();
+        try(Connection connection = connectBase()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement
+                    ("SELECT * FROM tasks WHERE task_status = ?")){
+                preparedStatement.setString(1, status.name());
+                try(ResultSet returnData = preparedStatement.executeQuery()){
+                    while(returnData.next()){
+                        tasks.add(new Task(returnData.getInt(1),
+                          returnData.getString(2),
+                          TaskStatus.valueOf(returnData.getString(3)),
+                          returnData.getObject(4, LocalDateTime.class)));
+                    }
+                }
+            }
+        }
+        catch(SQLException e){
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
+        }
+        return tasks;
+    }
+
+    @Override
+    public int statusAutoUpdate(){
+        try(Connection connection = connectBase()){
+            try(PreparedStatement preparedStatement = connection.prepareStatement
+                    ("UPDATE tasks SET task_status = ? WHERE task_status = ? AND created_at <= ?")){
+                preparedStatement.setString(1, TaskStatus.ABANDONED.name());
+                preparedStatement.setString(2, TaskStatus.PENDING.name());
+                preparedStatement.setObject(3, LocalDateTime.now().minusDays(7));
+                return preparedStatement.executeUpdate();
+
+            }
+        }
+        catch(SQLException e){
+            logger.error("Не удалось подключиться к базе данных.", e);
+            throw new RepositoryException("Не удалось подключиться к базе данных.", e);
+        }
     }
 
     private Connection connectBase(){

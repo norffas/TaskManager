@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface Repository {
 
-    Task saveTask(String description);
+    Task saveTask(Task task);
 
     Task findTaskById(int id);
 
@@ -15,6 +15,9 @@ public interface Repository {
 
     Task update(int id, TaskStatus status);
 
+    int statusAutoUpdate();
+
+    List<Task> findTasksByStatus(TaskStatus status);
 
     List<Task> findAll();
 

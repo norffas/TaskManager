@@ -4,20 +4,14 @@ import todo.service.TaskService;
 import todo.storage.StorageException;
 
 public class Exit implements Command {
-    private final TaskService manager;
+    private final TaskService service;
 
     public Exit(TaskService manager) {
-        this.manager = manager;
+        this.service = manager;
     }
 
     @Override
     public CommandResult execute() {
-        try {
-            manager.saveTasks();
-            return new CommandResult("Завершение выполнения программы. Все изменения сохранены.", true);
-        }
-        catch (StorageException e){
-            return new CommandResult("Ошибка при сохранении изменений. Попробуйте еще раз", false);
-        }
+        return new CommandResult("Завершение выполнения программы.", true);
     }
 }

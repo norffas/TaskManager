@@ -3,7 +3,7 @@ package todo.model;
 import java.time.LocalDateTime;
 
 public class Task {
-    private final int id;
+    private final Integer id;
     private final String description;
     private TaskStatus status;
     private final LocalDateTime createdAt;
@@ -16,8 +16,8 @@ public class Task {
         this.status = status;
     }
 
-    public Task(int id, String description) {
-        this.id = id;
+    public Task(String description) {
+        this.id = null;
         this.description = description;
         this.status = TaskStatus.PENDING;
         this.createdAt = LocalDateTime.now();

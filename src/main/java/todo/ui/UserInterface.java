@@ -2,7 +2,6 @@ package todo.ui;
 
 import todo.commands.CommandCreator;
 import todo.commands.Parameters;
-import todo.storage.StorageException;
 import todo.commands.CommandResult;
 import todo.service.TaskService;
 import todo.model.Task;
@@ -12,38 +11,32 @@ import java.util.List;
 import java.util.Map;
 
 public class UserInterface {
-    private final TaskService manager;
+    private final TaskService service;
     private volatile boolean exit = false;
     private final Output output;
     private final Input input;
 
     public UserInterface(TaskService manager, Output output, Input input) {
-        this.manager = manager;
+        this.service = manager;
         this.output = output;
         this.input = input;
     }
 
     public void start() {
-        try {
-            manager.loadTasks();
-        } catch (StorageException e) {
-            output.printError(e.getMessage());
-        }
-        Runnable autoSave = new Runnable() {
-            @Override
-            public void run() {
-                while(!exit){
-                    try {
-                        Thread.sleep(50000);
-                        manager.saveTasks();
-                    } catch (InterruptedException e) {
-                        return;
-                    }
+
+        Runnable autoUpdate = () ->{
+            while(!exit){
+                try {
+                    Thread.sleep(50000);
+                    int quality = service.updateAbandonedStatus();
+                    output.printMessage(quality + " изменили статус задачи.");
+                } catch (InterruptedException e) {
+                    return;
                 }
             }
         };
-        Thread saveThread = new Thread(autoSave);
-        saveThread.start();
+        Thread updateStatusThread = new Thread(autoUpdate);
+        updateStatusThread.start();
         CommandCreator commandCreator = new CommandCreator();
         while (true) {
             output.printMenu();
@@ -70,7 +63,7 @@ public class UserInterface {
             }
             CommandResult result;
             try{
-                result = commandCreator.createCommand(choice, manager, parameters).execute();
+                result = commandCreator.createCommand(choice, service, parameters).execute();
             }catch (IllegalArgumentException e){
                 output.printError(e.getMessage());
                 continue;
@@ -84,7 +77,7 @@ public class UserInterface {
             output.printTasks(tasks);
             if(exit){
                 input.closeInput();
-                saveThread.interrupt();
+                updateStatusThread.interrupt();
                 break;
             }
         }
