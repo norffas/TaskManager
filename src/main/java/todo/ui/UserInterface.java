@@ -3,6 +3,7 @@ package todo.ui;
 import todo.commands.CommandCreator;
 import todo.commands.Parameters;
 import todo.commands.CommandResult;
+import todo.repository.RepositoryException;
 import todo.service.TaskService;
 import todo.model.Task;
 
@@ -64,7 +65,12 @@ public class UserInterface {
             CommandResult result;
             try{
                 result = commandCreator.createCommand(choice, service, parameters).execute();
-            }catch (IllegalArgumentException e){
+            }
+            catch (RepositoryException e){
+                output.printError(e.getMessage());
+                continue;
+            }
+            catch (IllegalArgumentException e){
                 output.printError(e.getMessage());
                 continue;
             }

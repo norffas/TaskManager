@@ -2,11 +2,11 @@ package todo.service;
 
 import todo.model.Task;
 
-public class TaskManagerOperationResult {
+public class TaskServiceOperationResult {
     private final Task task;
     private final OperationStatus status;
 
-    public TaskManagerOperationResult(OperationStatus status, Task task) {
+    public TaskServiceOperationResult(OperationStatus status, Task task) {
         if(status == null)
             throw new NullPointerException();
         this.status = status;

@@ -2,7 +2,6 @@ package todo.repository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import todo.storage.StorageException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -27,7 +26,7 @@ public class DatabaseFactory {
             }
         }
         catch (SQLException e){
-            throw new RuntimeException();
+            throw new RepositoryException("Не удалось создать БД", e);
         }
     }
 
@@ -43,12 +42,12 @@ public class DatabaseFactory {
         catch (IOException e){
             String msg = "Не удалось получить данные для входа в базу данных.";
             logger.error(msg, e);
-            throw new StorageException(msg, e);
+            throw new RepositoryException(msg, e);
         }
         catch (SQLException e) {
             String msg = "Не удалось подключиться к базе данных.";
             logger.error(msg, e);
-            throw new StorageException(msg, e);
+            throw new RepositoryException(msg, e);
         }
     }
 }

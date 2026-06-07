@@ -1,7 +1,6 @@
 package todo.commands;
 
 import todo.service.TaskService;
-import todo.storage.StorageException;
 
 public class Exit implements Command {
     private final TaskService service;

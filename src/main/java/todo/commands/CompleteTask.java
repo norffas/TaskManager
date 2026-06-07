@@ -2,7 +2,7 @@ package todo.commands;
 
 import todo.service.OperationStatus;
 import todo.service.TaskService;
-import todo.service.TaskManagerOperationResult;
+import todo.service.TaskServiceOperationResult;
 import todo.model.Task;
 
 public class CompleteTask implements Command {
@@ -16,7 +16,7 @@ public class CompleteTask implements Command {
 
     @Override
     public CommandResult execute(){
-        TaskManagerOperationResult tmResult = manager.completeTask(id);
+        TaskServiceOperationResult tmResult = manager.completeTask(id);
         Task task = tmResult.getTask();
         OperationStatus status = tmResult.getStatus();
         String msg;

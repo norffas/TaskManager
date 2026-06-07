@@ -2,7 +2,7 @@ package todo.commands;
 
 import todo.service.OperationStatus;
 import todo.service.TaskService;
-import todo.service.TaskManagerOperationResult;
+import todo.service.TaskServiceOperationResult;
 
 public class DeleteTask implements Command {
     private final TaskService manager;
@@ -16,7 +16,7 @@ public class DeleteTask implements Command {
 
     @Override
     public CommandResult execute() {
-        TaskManagerOperationResult result = manager.deleteTask(id);
+        TaskServiceOperationResult result = manager.deleteTask(id);
         if(result.getStatus() == OperationStatus.NOT_FOUND)
             return new CommandResult("Задача не найдена");
         else{

@@ -12,7 +12,7 @@ public class Task {
         return status;
     }
 
-    public void setStatus(TaskStatus status){
+    private void setStatus(TaskStatus status){
         this.status = status;
     }
 
@@ -39,7 +39,7 @@ public class Task {
             this.status = TaskStatus.COMPLETED;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

@@ -2,7 +2,7 @@ package todo.commands;
 
 import todo.service.OperationStatus;
 import todo.service.TaskService;
-import todo.service.TaskManagerOperationResult;
+import todo.service.TaskServiceOperationResult;
 
 public class AddTask implements Command{
     private final TaskService manager;
@@ -15,7 +15,7 @@ public class AddTask implements Command{
 
     @Override
     public CommandResult execute() {
-        TaskManagerOperationResult result = manager.addTask(description);
+        TaskServiceOperationResult result = manager.addTask(description);
         if(result.getStatus() == OperationStatus.ADDED){
             return new CommandResult("Задача успешно создана", result.getTask());
         }

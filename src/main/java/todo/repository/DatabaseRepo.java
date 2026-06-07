@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import todo.model.Task;
 import todo.model.TaskStatus;
-import todo.storage.StorageException;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -164,13 +163,13 @@ public class DatabaseRepo implements Repository {
     }
 
     @Override
-    public int statusAutoUpdate(){
+    public int statusAutoUpdate(LocalDateTime date){
         try(Connection connection = connectBase()){
             try(PreparedStatement preparedStatement = connection.prepareStatement
                     ("UPDATE tasks SET task_status = ? WHERE task_status = ? AND created_at <= ?")){
                 preparedStatement.setString(1, TaskStatus.ABANDONED.name());
                 preparedStatement.setString(2, TaskStatus.PENDING.name());
-                preparedStatement.setObject(3, LocalDateTime.now().minusDays(7));
+                preparedStatement.setObject(3, date);
                 return preparedStatement.executeUpdate();
 
             }
@@ -193,12 +192,12 @@ public class DatabaseRepo implements Repository {
         catch (IOException e){
             String msg = "Не удалось получить данные для входа в базу данных.";
             logger.error(msg, e);
-            throw new StorageException(msg, e);
+            throw new RepositoryException(msg, e);
         }
         catch (SQLException e) {
             String msg = "Не удалось подключиться к базе данных.";
             logger.error(msg, e);
-            throw new StorageException(msg, e);
+            throw new RepositoryException(msg, e);
         }
     }
 

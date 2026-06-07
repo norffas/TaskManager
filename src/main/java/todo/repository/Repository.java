@@ -3,6 +3,7 @@ package todo.repository;
 import todo.model.Task;
 import todo.model.TaskStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface Repository {
@@ -15,7 +16,7 @@ public interface Repository {
 
     Task update(int id, TaskStatus status);
 
-    int statusAutoUpdate();
+    int statusAutoUpdate(LocalDateTime date);
 
     List<Task> findTasksByStatus(TaskStatus status);
 
